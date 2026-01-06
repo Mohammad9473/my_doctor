@@ -89,28 +89,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const signUp = async (email: string, password: string, isDoctor: boolean) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    isDoctor: boolean
+  ) => {
     setIsLoading(true);
     setError(null);
-    let uid;
+  
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-      uid = userCredential.user.uid;
-      await Promise.all([
-        createUser(uid, isDoctor),
-        setUserTypeClaim(uid, isDoctor),
-      ]);
+  
+      const uid = userCredential.user.uid;
+  
+      // 1️⃣ Create Firestore doc
+      await createUser(uid, isDoctor);
+  
+      // 2️⃣ Set custom claim (callable function)
+      await setUserTypeClaim(uid, isDoctor);
+  
+      // 3️⃣ 🔥 FORCE TOKEN REFRESH (THIS IS THE MISSING PIECE)
+      await userCredential.user.getIdToken(true);
+  
       return userCredential;
     } catch (err: any) {
+      console.error(err);
+      throw err;
     } finally {
       setIsLoading(false);
     }
   };
-
+  
   const googleSignUp = async () => {
     alert("Coming Soon :D");
     return;
