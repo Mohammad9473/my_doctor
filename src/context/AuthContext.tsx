@@ -32,7 +32,7 @@ interface AuthContextType {
 const defaultAuthContext: AuthContextType = {
   userType: null,
   user: null,
-    login: () => Promise.resolve(),
+  login: () => Promise.resolve(),
   signUp: () => Promise.resolve(),
   googleSignUp: () => Promise.resolve(),
   logout: () => Promise.resolve(),
@@ -56,18 +56,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-      if(authUser){
+      if (authUser) {
         const token = await authUser.getIdTokenResult();
         const userTypeClaim = token.claims.userType;
         if (userTypeClaim) {
           if (userTypeClaim === "doctor" || userTypeClaim === "patient") {
             setUserType(userTypeClaim);
           }
-        }else {
-              setUserType(null);
+        } else {
+          setUserType(null);
         }
-        setUser({...authUser, userType: token.claims.userType});
-      }else{
+        setUser({ ...authUser, userType: token.claims.userType });
+      } else {
         setUser(null);
       }
       setUser(authUser);
@@ -78,8 +78,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    alert('Coming Soon :D')
-    return
     setIsLoading(true);
     setError(null);
     try {
@@ -92,8 +90,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const signUp = async (email: string, password: string, isDoctor: boolean) => {
-    alert('Coming Soon :D')
-    return
     setIsLoading(true);
     setError(null);
     let uid;
@@ -103,19 +99,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email,
         password
       );
-      uid = userCredential.user.uid
-      await Promise.all([createUser(uid, isDoctor), setUserTypeClaim(uid, isDoctor)])
+      uid = userCredential.user.uid;
+      await Promise.all([
+        createUser(uid, isDoctor),
+        setUserTypeClaim(uid, isDoctor),
+      ]);
       return userCredential;
     } catch (err: any) {
-      console.log('here error')
     } finally {
       setIsLoading(false);
     }
   };
 
   const googleSignUp = async () => {
-    alert('Coming Soon :D')
-    return
+    alert("Coming Soon :D");
+    return;
     setIsLoading(true);
     setError(null);
     const provider = new GoogleAuthProvider();
@@ -129,8 +127,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = async () => {
-    alert('Coming Soon :D')
-    return
     setIsLoading(true);
     setError(null);
     try {
